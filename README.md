@@ -10,15 +10,12 @@ npm install @janjao/ui
 
 ## Usage
 
-
-```js
-import { multiply } from '@janjao/ui';
+```tsx
+import { Button } from '@janjao/ui';
 
 // ...
-
-const result = await multiply(3, 7);
+<Button title="Click me" onPress={handlePress} />;
 ```
-
 
 ## Contributing
 
@@ -31,3 +28,5 @@ MIT
 ---
 
 Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
+
+# janjao-ui
