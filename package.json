@@ -196,6 +196,8 @@
   },
   "dependencies": {
     "expo": "^51.0.31",
-    "janjao-ui": "https://github.com/HakimIno/janjao-ui.git"
+    "expo-linear-gradient": "^13.0.2",
+    "janjao-ui": "https://github.com/HakimIno/janjao-ui.git",
+    "react-native-reanimated": "3.10.1"
   }
 }
