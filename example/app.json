@@ -24,6 +24,10 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "newArchEnabled": true,
+    "experiments": {
+      "typedRoutes": true
     }
   }
 }

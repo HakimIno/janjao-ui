@@ -11,8 +11,39 @@ const root = path.resolve(__dirname, '..');
  *
  * @type {import('metro-config').MetroConfig}
  */
-module.exports = getConfig(getDefaultConfig(__dirname), {
+const config = getConfig(getDefaultConfig(__dirname), {
   root,
   pkg,
   project: __dirname,
 });
+
+// Enable resolving all file extensions
+config.resolver.sourceExts = [
+  'js',
+  'jsx',
+  'ts',
+  'tsx',
+  'json',
+  'mjs',
+  'ios.js',
+  'ios.jsx',
+  'ios.ts',
+  'ios.tsx',
+  'android.js',
+  'android.jsx',
+  'android.ts',
+  'android.tsx',
+  'web.js',
+  'web.jsx',
+  'web.ts',
+  'web.tsx',
+];
+
+// Add watchFolders to include the parent directory
+config.watchFolders = [
+  ...(config.watchFolders || []),
+  path.resolve(root, 'src'),
+  path.resolve(root, 'node_modules'),
+];
+
+module.exports = config;

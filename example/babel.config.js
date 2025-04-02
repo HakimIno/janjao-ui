@@ -10,7 +10,27 @@ module.exports = function (api) {
   return getConfig(
     {
       presets: ['babel-preset-expo'],
-      plugins: ['react-native-reanimated/plugin'],
+      plugins: [
+        'react-native-reanimated/plugin',
+        [
+          'module-resolver',
+          {
+            alias: {
+              '@janjao/ui': '../src/index',
+            },
+            extensions: [
+              '.js',
+              '.jsx',
+              '.ts',
+              '.tsx',
+              '.android.js',
+              '.android.tsx',
+              '.ios.js',
+              '.ios.tsx',
+            ],
+          },
+        ],
+      ],
     },
     { root, pkg }
   );

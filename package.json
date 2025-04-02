@@ -198,7 +198,8 @@
     "expo": "^51.0.31",
     "expo-linear-gradient": "^13.0.2",
     "janjao-ui": "git+https://github.com/HakimIno/janjao-ui.git",
-    "react-native-reanimated": "3.10.1"
+    "react-native-gesture-handler": "^2.19.0",
+    "react-native-reanimated": "3.10.0"
   },
   "directories": {
     "example": "example",
