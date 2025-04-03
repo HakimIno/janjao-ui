@@ -8,7 +8,9 @@ import {
   ButtonScreen,
 } from './screens/Button';
 import ButtonSurfaceScreen from './screens/Button/ButtonSurfaceScreen';
-import AccordionScreen from './screens/Accordion';
+import AccordionMenu from './screens/AccordionVariants/AccordionMenu';
+import AccordionVariantDetail from './screens/AccordionVariants/AccordionVariantDetail';
+import TextInputAccordionExample from './screens/TextInputAccordionExample';
 
 const Stack = createStackNavigator();
 
@@ -27,7 +29,14 @@ export default function App() {
             Disabled: 'disabled',
           },
         },
-        Accordion: 'accordion',
+        Accordion: {
+          path: 'accordion',
+          screens: {
+            AccordionMenu: 'accordion',
+            AccordionVariantDetail: 'accordion/:variant',
+            TextInputAccordionExample: 'accordion/text-input',
+          },
+        },
       },
     },
   };
@@ -58,7 +67,15 @@ function ButtonNavigator() {
 function AccordionNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Accordion" component={AccordionScreen} />
+      <Stack.Screen name="AccordionMenu" component={AccordionMenu} />
+      <Stack.Screen
+        name="AccordionVariantDetail"
+        component={AccordionVariantDetail}
+      />
+      <Stack.Screen
+        name="TextInputAccordionExample"
+        component={TextInputAccordionExample}
+      />
     </Stack.Navigator>
   );
 }
