@@ -11,6 +11,7 @@ import ButtonSurfaceScreen from './screens/Button/ButtonSurfaceScreen';
 import AccordionMenu from './screens/AccordionVariants/AccordionMenu';
 import AccordionVariantDetail from './screens/AccordionVariants/AccordionVariantDetail';
 import TextInputAccordionExample from './screens/TextInputAccordionExample';
+import CheckBoxScreen from './screens/CheckBox';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +38,12 @@ export default function App() {
             TextInputAccordionExample: 'accordion/text-input',
           },
         },
+        CheckBox: {
+          path: 'checkbox',
+          screens: {
+            CheckBoxScreen: 'checkbox',
+          },
+        },
       },
     },
   };
@@ -46,6 +53,7 @@ export default function App() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Button" component={ButtonNavigator} />
         <Stack.Screen name="Accordion" component={AccordionNavigator} />
+        <Stack.Screen name="CheckBox" component={CheckBoxNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -76,6 +84,14 @@ function AccordionNavigator() {
         name="TextInputAccordionExample"
         component={TextInputAccordionExample}
       />
+    </Stack.Navigator>
+  );
+}
+
+function CheckBoxNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="CheckBoxScreen" component={CheckBoxScreen} />
     </Stack.Navigator>
   );
 }
