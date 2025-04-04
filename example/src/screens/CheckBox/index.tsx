@@ -25,20 +25,20 @@ const CheckBoxScreen = () => {
     return StyleSheet.create({
       container: {
         paddingHorizontal: getResponsiveSize(16),
-        paddingTop: getResponsiveSize(20),
+        paddingTop: getResponsiveSize(50),
       },
       header: {
-        marginBottom: getResponsiveSize(10),
+        marginBottom: getResponsiveSize(5),
       },
       welcome: {
-        fontSize: getResponsiveSize(24),
+        fontSize: getResponsiveSize(14),
       },
       name: {
-        fontSize: getResponsiveSize(32),
+        fontSize: getResponsiveSize(28),
       },
       sectionTitle: {
         fontSize: getResponsiveSize(18),
-        marginBottom: getResponsiveSize(16),
+        marginBottom: getResponsiveSize(10),
       },
       shapeLabel: {
         fontSize: getResponsiveSize(14),
@@ -48,12 +48,12 @@ const CheckBoxScreen = () => {
         marginTop: getResponsiveSize(20),
         marginBottom: getResponsiveSize(20),
         padding: getResponsiveSize(8),
-        borderRadius: getResponsiveSize(40),
+        borderRadius: getResponsiveSize(10),
       },
       hotspotButton: {
         paddingVertical: getResponsiveSize(6),
         paddingHorizontal: getResponsiveSize(12),
-        borderRadius: getResponsiveSize(20),
+        borderRadius: getResponsiveSize(10),
       },
     });
   }, [getResponsiveSize]);
@@ -149,13 +149,11 @@ const CheckBoxScreen = () => {
           <Text style={[styles.name, responsiveStyles.name]}>Janjao UI</Text>
         </View>
 
-        <Animated.Image
-          source={{
-            uri: 'https://gist.github.com/user-attachments/assets/60a2b227-28ea-4de3-b266-b58a71b71dbb',
-          }}
+        {/* <Animated.Image
+          source={require('../../../assets/bg-orb.png')}
           style={styles.bgOrb}
           blurRadius={100}
-        />
+        /> */}
 
         <View style={styles.section}>
           {todoItems.map((item) => (
@@ -172,6 +170,7 @@ const CheckBoxScreen = () => {
               withShadow={item.withShadow}
               onToggle={() => toggleTodo(item.id)}
               size={getResponsiveSize(24)}
+              textStyle={{ fontSize: getResponsiveSize(14) , color: "#fff" }}
             />
           ))}
         </View>
@@ -245,7 +244,7 @@ const CheckBoxScreen = () => {
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Checkbox
                 shape="round"
-                checkedColor="#ffa040"
+                checkedColor="#f43f5e"
                 controlled
                 checked={isChecked}
                 onPress={(newValue) => setIsChecked(newValue)}
@@ -276,7 +275,7 @@ const CheckBoxScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#1e3a8a',
   },
   gradient: {
     flex: 1,
@@ -292,6 +291,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#ffffff',
   },
   bgOrb: {
     width: '100%',
@@ -301,7 +301,6 @@ const styles = StyleSheet.create({
     left: 0,
     opacity: 0.5,
     zIndex: -1,
-    borderRadius: 9999,
   },
   section: {
     marginVertical: 10,
@@ -310,6 +309,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: "#fff"
   },
   shapesContainer: {
     flexDirection: 'row',
@@ -322,6 +322,7 @@ const styles = StyleSheet.create({
   shapeLabel: {
     marginTop: 5,
     fontSize: 14,
+    color: "#fff"
   },
   stylesContainer: {
     marginVertical: 10,
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     marginTop: 10,
-    backgroundColor: '#ffffff',
+    backgroundColor: 'rgba(255,255,255,0.8)',
     padding: 8,
     borderRadius: 40,
   },
@@ -344,7 +345,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#ffa040',
+    backgroundColor: '#f43f5e',
   },
   searchText: {
     flex: 1,
@@ -352,10 +353,10 @@ const styles = StyleSheet.create({
     color: '#888888',
   },
   hotspotButton: {
-    backgroundColor: '#ffa040',
+    backgroundColor: '#f43f5e',
     paddingVertical: 6,
     paddingHorizontal: 12,
-    borderRadius: 20,
+    borderRadius: 10,
   },
   hotspotText: {
     color: '#ffffff',

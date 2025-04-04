@@ -124,7 +124,6 @@ const TodoCheckbox = ({
         <Animated.Text
           style={[
             styles.text,
-            { fontSize: size * 0.7 },
             animatedTextStyle,
             textStyle,
           ]}
@@ -154,7 +153,6 @@ const styles = StyleSheet.create({
   },
   text: {
     marginLeft: 12,
-
     flex: 1,
   },
   emoji: {
