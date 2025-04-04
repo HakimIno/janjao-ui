@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import type { ViewStyle, TextStyle } from 'react-native';
 import Animated, {
@@ -62,33 +62,49 @@ export type CheckboxProps = {
   withShadow?: boolean;
 };
 
-// Add a separate component for the check mark
-const CheckMark = ({
+// Memoize the CheckMark component to prevent unnecessary re-renders
+const CheckMark = memo(({
   checked,
   checkMarkColor,
   size,
   checkMarkOpacity,
+  checkMarkScale,
 }: {
   checked: boolean;
   checkMarkColor: string;
   size: number;
   checkMarkOpacity: SharedValue<number>;
+  checkMarkScale: SharedValue<number>;
 }) => {
-  const animatedProps = useAnimatedProps(() => ({
-    strokeDasharray: [30],
-    strokeDashoffset: checked ? 0 : 30,
+  // Optimize the path animation
+  const pathAnimation = useAnimatedProps(() => ({
+    strokeDasharray: 30,
+    strokeDashoffset: checked ? withTiming(0, {
+      duration: 300,
+      easing: Easing.bezier(0.16, 1, 0.3, 1),
+    }) : withTiming(30, {
+      duration: 200,
+      easing: Easing.bezier(0.16, 1, 0.3, 1),
+    }),
+  }));
+
+  // Optimize view animation
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: checkMarkOpacity.value,
+    transform: [{ scale: checkMarkScale.value }],
   }));
 
   return (
     <Animated.View
       style={[
         {
+          position: 'absolute',
           width: '100%',
           height: '100%',
           justifyContent: 'center',
           alignItems: 'center',
         },
-        { opacity: checkMarkOpacity.value },
+        animatedStyle,
       ]}
     >
       <Svg
@@ -103,17 +119,66 @@ const CheckMark = ({
           d="M5,12 L10,17 L19,8"
           strokeLinecap="round"
           strokeLinejoin="round"
-          animatedProps={animatedProps}
+          animatedProps={pathAnimation}
         />
       </Svg>
     </Animated.View>
   );
-};
+});
+
+// Memoize the LineCheckMark component
+const LineCheckMark = memo(({
+  checkMarkColor,
+  checkMarkOpacity,
+  checkMarkScale,
+}: {
+  checkMarkColor: string;
+  checkMarkOpacity: SharedValue<number>;
+  checkMarkScale: SharedValue<number>;
+}) => {
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: checkMarkOpacity.value,
+    transform: [{ scale: checkMarkScale.value }],
+  }));
+
+  return (
+    <Animated.View style={[styles.checkMark, animatedStyle]}>
+      <View
+        style={[styles.checkMarkLine1, { backgroundColor: checkMarkColor }]}
+      />
+      <View
+        style={[styles.checkMarkLine2, { backgroundColor: checkMarkColor }]}
+      />
+    </Animated.View>
+  );
+});
+
+// Memoize the CustomCheckMark component
+const CustomCheckMark = memo(({
+  checkMarkIcon,
+  checkMarkOpacity,
+  checkMarkScale,
+}: {
+  checkMarkIcon: React.ReactNode;
+  checkMarkOpacity: SharedValue<number>;
+  checkMarkScale: SharedValue<number>;
+}) => {
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: checkMarkOpacity.value,
+    transform: [{ scale: checkMarkScale.value }],
+  }));
+
+  return (
+    <Animated.View style={[styles.checkMark, animatedStyle]}>
+      {checkMarkIcon}
+    </Animated.View>
+  );
+});
 
 /**
  * A customizable checkbox component with various states and styles
  */
-const Checkbox = ({
+const Checkbox = memo(({
   checked: checkedProp,
   onPress,
   label,
@@ -138,7 +203,7 @@ const Checkbox = ({
 }: CheckboxProps) => {
   const [internalChecked, setInternalChecked] = useState(false);
 
-  const checked = controlled ? checkedProp : internalChecked;
+  const checked = controlled ? (checkedProp ?? false) : internalChecked;
 
   const progress = useSharedValue(checked ? 1 : 0);
   const checkMarkScale = useSharedValue(checked ? 1 : 0);
@@ -146,10 +211,12 @@ const Checkbox = ({
   const checkPathLength = useSharedValue(checked ? 1 : 0);
 
   React.useEffect(() => {
-    progress.value = withTiming(checked ? 1 : 0, {
+    const timingConfig = {
       duration: animationDuration,
       easing: Easing.bezier(0.16, 1, 0.3, 1),
-    });
+    };
+
+    progress.value = withTiming(checked ? 1 : 0, timingConfig);
 
     if (checked) {
       checkMarkScale.value = withSequence(
@@ -165,9 +232,9 @@ const Checkbox = ({
         withTiming(1, { duration: animationDuration * 0.8 })
       );
     } else {
-      checkMarkScale.value = withTiming(0, {
-        duration: animationDuration * 0.3,
-      });
+      const hideConfig = { duration: animationDuration * 0.3 };
+      
+      checkMarkScale.value = withTiming(0, hideConfig);
       checkMarkOpacity.value = withTiming(0, {
         duration: animationDuration * 0.2,
       });
@@ -201,7 +268,7 @@ const Checkbox = ({
     };
   });
 
-  const handlePress = () => {
+  const handlePress = useCallback(() => {
     if (disabled) return;
 
     const newValue = !checked;
@@ -211,62 +278,79 @@ const Checkbox = ({
     }
 
     onPress?.(newValue);
-  };
+  }, [disabled, checked, controlled, onPress]);
 
-  const renderCheckMark = () => {
+  const renderCheckMark = useCallback(() => {
     if (!showCheckMark) return null;
 
     if (checkMarkIcon) {
       return (
-        <Animated.View
-          style={[styles.checkMark, { opacity: checkMarkOpacity.value }]}
-        >
-          {checkMarkIcon}
-        </Animated.View>
+        <CustomCheckMark
+          checkMarkIcon={checkMarkIcon}
+          checkMarkOpacity={checkMarkOpacity}
+          checkMarkScale={checkMarkScale}
+        />
       );
     }
 
     if (checkMarkStyle === 'line') {
       return (
-        <Animated.View
-          style={[styles.checkMark, { opacity: checkMarkOpacity.value }]}
-        >
-          <View
-            style={[styles.checkMarkLine1, { backgroundColor: checkMarkColor }]}
-          />
-          <View
-            style={[styles.checkMarkLine2, { backgroundColor: checkMarkColor }]}
-          />
-        </Animated.View>
+        <LineCheckMark
+          checkMarkColor={checkMarkColor}
+          checkMarkOpacity={checkMarkOpacity}
+          checkMarkScale={checkMarkScale}
+        />
       );
     }
 
     return (
       <CheckMark
-        checked={checked ?? false}
+        checked={checked}
         checkMarkColor={checkMarkColor}
         size={size}
         checkMarkOpacity={checkMarkOpacity}
+        checkMarkScale={checkMarkScale}
       />
     );
-  };
+  }, [
+    showCheckMark,
+    checkMarkIcon,
+    checkMarkStyle,
+    checkMarkColor,
+    checked,
+    size,
+    checkMarkOpacity,
+    checkMarkScale,
+  ]);
 
-  const getBorderRadius = () => {
-    if (shape === 'round') {
-      return size / 2;
-    }
-    return borderRadius;
-  };
+  const borderRadiusValue = React.useMemo(() => {
+    return shape === 'round' ? size / 2 : borderRadius;
+  }, [shape, size, borderRadius]);
 
-  const shadowStyle = withShadow
-    ? {
-        shadowColor: checked ? checkedColor : '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: checked ? 0.4 : 0,
-        shadowRadius: 3,
-        elevation: checked ? 4 : 0,
-      }
-    : {};
+  const shadowStyleValue = React.useMemo(() => {
+    if (!withShadow) return {};
+    
+    return {
+      shadowColor: checked ? checkedColor : '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: checked ? 0.4 : 0,
+      shadowRadius: 3,
+      elevation: checked ? 4 : 0,
+    };
+  }, [withShadow, checked, checkedColor]);
+
+  const sizeStyle = React.useMemo(() => ({
+    width: size,
+    height: size,
+    borderRadius: borderRadiusValue,
+    borderWidth: borderWidth,
+  }), [size, borderRadiusValue, borderWidth]);
+
+  const computedLabelStyle = React.useMemo(() => [
+    styles.label,
+    { color: disabled ? disabledColor : '#000000' },
+    labelStyle,
+  ], [disabled, disabledColor, labelStyle]);
 
   return (
     <TouchableOpacity
@@ -278,13 +362,8 @@ const Checkbox = ({
       <Animated.View
         style={[
           styles.checkbox,
-          {
-            width: size,
-            height: size,
-            borderRadius: getBorderRadius(),
-            borderWidth: borderWidth,
-          },
-          shadowStyle,
+          sizeStyle,
+          shadowStyleValue,
           animatedStyle,
           checkboxStyle,
         ]}
@@ -292,20 +371,10 @@ const Checkbox = ({
         {renderCheckMark()}
       </Animated.View>
 
-      {label && (
-        <Text
-          style={[
-            styles.label,
-            { color: disabled ? disabledColor : '#000000' },
-            labelStyle,
-          ]}
-        >
-          {label}
-        </Text>
-      )}
+      {label && <Text style={computedLabelStyle}>{label}</Text>}
     </TouchableOpacity>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
