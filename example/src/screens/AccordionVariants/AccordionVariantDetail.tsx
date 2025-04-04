@@ -6,7 +6,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
-  useWindowDimensions,
+  StatusBar,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
@@ -26,6 +26,7 @@ type VariantConfigType = {
   color: string;
   description: string;
   isDark?: boolean;
+  backgroundColor?: string;
 };
 
 type VariantConfigMap = {
@@ -36,109 +37,6 @@ const AccordionVariantDetail = () => {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<Record<string, RouteParams>, string>>();
   const { variant } = route.params ?? { variant: 'shadow' };
-  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
-
-  const styles = useMemo(
-    () =>
-      StyleSheet.create({
-        container: {
-          flex: 1,
-          backgroundColor: '#1e40af',
-        },
-        header: {
-          marginTop: screenHeight * 0.06,
-          padding: screenWidth * 0.04,
-          backgroundColor: '#1e40af',
-          flexDirection: 'row',
-          alignItems: 'center',
-        },
-        headerTextContainer: {
-          flex: 1,
-          alignItems: 'center',
-        },
-        headerTitle: {
-          fontSize: Math.min(screenWidth * 0.045, 22),
-          fontWeight: '700',
-          color: '#ffffff',
-          letterSpacing: 0.5,
-        },
-        headerSubtitle: {
-          fontSize: Math.min(screenWidth * 0.035, 16),
-          color: 'rgba(255, 255, 255, 0.85)',
-          marginTop: 4,
-          fontWeight: '400',
-        },
-        backButton: {
-          width: Math.min(screenWidth * 0.1, 40),
-          height: Math.min(screenWidth * 0.1, 40),
-          borderRadius: Math.min(screenWidth * 0.05, 20),
-          backgroundColor: 'rgba(255, 255, 255, 0.15)',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginLeft: screenWidth * 0.02,
-        },
-        backButtonText: {
-          color: '#ffffff',
-          fontSize: Math.min(screenWidth * 0.045, 22),
-          fontWeight: '500',
-        },
-        scrollView: {
-          flex: 1,
-        },
-        scrollContent: {
-          padding: screenWidth * 0.04,
-          paddingBottom: screenHeight * 0.08,
-        },
-        descriptionContainer: {
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          borderRadius: Math.min(screenWidth * 0.04, 16),
-          padding: screenWidth * 0.03,
-          marginBottom: screenHeight * 0.02,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.05,
-          shadowRadius: 10,
-          elevation: 3,
-        },
-        darkDescriptionContainer: {
-          backgroundColor: '#1F2937',
-        },
-        descriptionText: {
-          fontSize: Math.min(screenWidth * 0.035, 15),
-          lineHeight: Math.min(screenWidth * 0.055, 22),
-          color: '#6B7280',
-          fontWeight: '400',
-        },
-        darkDescriptionText: {
-          color: '#D1D5DB',
-        },
-        accordionContainer: {
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          borderRadius: Math.min(screenWidth * 0.04, 16),
-          padding: screenWidth * 0.03,
-          marginBottom: screenHeight * 0.02,
-        },
-        darkAccordionContainer: {
-          backgroundColor: '#1F2937',
-        },
-        accordionTitle: {
-          fontSize: Math.min(screenWidth * 0.045, 18),
-          fontWeight: '600',
-          color: '#111827',
-          marginBottom: screenHeight * 0.02,
-          letterSpacing: 0.2,
-        },
-        darkAccordionTitle: {
-          color: '#ffffff',
-        },
-        divider: {
-          height: 1,
-          backgroundColor: 'rgba(229, 231, 235, 0.5)',
-          marginVertical: screenHeight * 0.02,
-        },
-      }),
-    [screenWidth, screenHeight]
-  );
 
   const variantConfig = useMemo<VariantConfigMap>(
     () => ({
@@ -149,6 +47,7 @@ const AccordionVariantDetail = () => {
         theme: 'purple',
         defaultOpenIds: ['1'],
         color: '#4f46e5',
+        backgroundColor: '#EEF2FF',
         description:
           'The Shadow accordion uses elevation and shadow effects to create a modern, layered interface.',
       },
@@ -159,6 +58,7 @@ const AccordionVariantDetail = () => {
         theme: 'blue',
         defaultOpenIds: ['2'],
         color: '#1A56DB',
+        backgroundColor: '#EFF6FF',
         description:
           'The Bordered accordion uses distinct borders for clear content delineation.',
       },
@@ -169,6 +69,7 @@ const AccordionVariantDetail = () => {
         theme: 'green',
         defaultOpenIds: ['3'],
         color: '#84cc16',
+        backgroundColor: '#F7FEE7',
         description:
           'The Light accordion employs soft contrasts for a gentle hierarchy.',
       },
@@ -179,6 +80,7 @@ const AccordionVariantDetail = () => {
         theme: 'orange',
         defaultOpenIds: ['2.1'],
         color: '#FF5A1F',
+        backgroundColor: '#FFF7ED',
         description:
           'The Splitted accordion improves scannability with clear separation.',
       },
@@ -189,6 +91,7 @@ const AccordionVariantDetail = () => {
         theme: 'gray',
         defaultOpenIds: [],
         color: '#4B5563',
+        backgroundColor: '#F9FAFB',
         description:
           'The Flat accordion focuses on color and typography for organization.',
       },
@@ -199,6 +102,7 @@ const AccordionVariantDetail = () => {
         theme: 'dark',
         defaultOpenIds: [],
         color: '#252F3F',
+        backgroundColor: '#111827',
         isDark: true,
         description: 'The Minimal accordion delivers distraction-free content.',
       },
@@ -208,36 +112,229 @@ const AccordionVariantDetail = () => {
         variant: 'all',
         theme: 'all',
         color: '#1d4ed8',
+        backgroundColor: '#F9FAFB',
         description: 'Compare all accordion variants in one view.',
       },
     }),
     []
   );
 
-  const selectedVariant = useMemo(() => {
-    return variantConfig[variant] || variantConfig.shadow;
+  const selectedVariant = useMemo((): VariantConfigType => {
+    // If variant exists in config, use it; otherwise fall back to shadow variant
+    const configVariant = variant in variantConfig ? variantConfig[variant] : variantConfig.shadow;
+    // Add type assertion to satisfy TypeScript
+    return configVariant as VariantConfigType;
   }, [variant, variantConfig]);
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          flex: 1,
+          backgroundColor: selectedVariant.color,
+        },
+        header: {
+          paddingTop: 60,
+          paddingBottom: 20,
+          paddingHorizontal: 24,
+          backgroundColor: selectedVariant.color,
+          flexDirection: 'row',
+          alignItems: 'center',
+        },
+        headerTextContainer: {
+          flex: 1,
+          alignItems: 'center',
+        },
+        headerTitle: {
+          fontSize: 18,
+          fontWeight: '700',
+          color: '#ffffff',
+          letterSpacing: 0.5,
+        },
+        headerSubtitle: {
+          fontSize: 14,
+          color: 'rgba(255, 255, 255, 0.85)',
+          marginTop: 4,
+          fontWeight: '400',
+        },
+        backButton: {
+          width: 44,
+          height: 44,
+          borderRadius: 22,
+          backgroundColor: 'rgba(255, 255, 255, 0.25)',
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
+        backButtonText: {
+          color: '#ffffff',
+          fontSize: 22,
+          fontWeight: '500',
+        },
+        contentContainer: {
+          flex: 1,
+          backgroundColor: selectedVariant.backgroundColor || '#F9FAFB',
+          borderTopLeftRadius: 24,
+          borderTopRightRadius: 24,
+          marginTop: 16,
+          paddingTop: 8,
+        },
+        scrollView: {
+          flex: 1,
+        },
+        scrollContent: {
+          padding: 8,
+          paddingBottom: 40,
+        },
+        accordionSection: {
+          borderRadius: 16,
+          overflow: 'hidden',
+          marginBottom: 20,
+          padding: 5,
+        },
+        darkAccordionSection: {
+          backgroundColor: '#1F2937',
+        },
+        sectionHeader: {
+          padding: 20,
+          borderBottomWidth: 1,
+          borderBottomColor: 'rgba(229, 231, 235, 0.5)',
+        },
+        sectionTitle: {
+          fontSize: 18,
+          fontWeight: '700',
+          color: '#111827',
+        },
+        darkSectionTitle: {
+          color: '#ffffff',
+        },
+        sectionContent: {
+          padding: 16,
+        },
+        variantContainer: {
+          marginBottom: 14,
+        },
+        variantSpacing: {
+          marginTop: 24,
+        },
+        variantHeader: {
+          fontSize: 16,
+          fontWeight: '600',
+          color: selectedVariant.color,
+          marginBottom: 12,
+          paddingHorizontal: 4,
+        },
+        darkVariantHeader: {
+          color: '#E5E7EB',
+        },
+        divider: {
+          height: 1,
+          backgroundColor: 'rgba(229, 231, 235, 0.7)',
+          marginVertical: 24,
+        },
+        spacer: {
+          height: 16,
+        },
+      }),
+    [selectedVariant]
+  );
 
   const renderAccordion = (
     type: string,
     theme: string,
-    compact: boolean = false
+    data: any[],
+    defaultOpenIds: string[] = []
   ) => {
     return (
       <AccordionUnified
-        data={compact ? compactData : sampleData}
+        data={data}
         variant={type as any}
         theme={theme}
         animationType="timing"
         animationDuration={300}
-        defaultOpenIds={selectedVariant?.defaultOpenIds || []}
-        compact={compact}
+        defaultOpenIds={defaultOpenIds}
+        compact={data === compactData}
       />
+    );
+  };
+
+  const renderVariantAccordions = () => {
+    if (variant === 'all') {
+      return Object.entries(variantConfig)
+        .filter(([key]) => key !== 'all')
+        .map(([key, config], index) => (
+          <View
+            key={key}
+            style={[
+              styles.variantContainer,
+              index > 0 && styles.variantSpacing,
+            ]}
+          >
+            <Text
+              style={[
+                styles.variantHeader,
+                config.isDark && styles.darkVariantHeader,
+              ]}
+            >
+              {config.title}
+            </Text>
+            {renderAccordion(
+              config.variant as string,
+              config.theme as string,
+              sampleData,
+              config.defaultOpenIds || []
+            )}
+          </View>
+        ));
+    }
+
+    return (
+      <>
+        <View style={styles.variantContainer}>
+          <Text
+            style={[
+              styles.variantHeader,
+              selectedVariant?.isDark && styles.darkVariantHeader,
+            ]}
+          >
+            Standard Style
+          </Text>
+          {renderAccordion(
+            selectedVariant.variant,
+            selectedVariant.theme,
+            sampleData,
+            selectedVariant.defaultOpenIds || []
+          )}
+        </View>
+
+        <View style={styles.divider} />
+
+        <View style={styles.variantContainer}>
+          <Text
+            style={[
+              styles.variantHeader,
+              selectedVariant?.isDark && styles.darkVariantHeader,
+            ]}
+          >
+            Compact Style
+          </Text>
+          {renderAccordion(
+            selectedVariant.variant,
+            selectedVariant.theme,
+            compactData,
+            selectedVariant.defaultOpenIds || []
+          )}
+        </View>
+      </>
     );
   };
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor={selectedVariant.color}
+      />
+
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -255,142 +352,22 @@ const AccordionVariantDetail = () => {
         </View>
       </View>
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <View
-          style={[
-            styles.descriptionContainer,
-            selectedVariant?.isDark && styles.darkDescriptionContainer,
-          ]}
+      <View style={styles.contentContainer}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
         >
-          <Text
+          <View
             style={[
-              styles.descriptionText,
-              selectedVariant?.isDark && styles.darkDescriptionText,
+              styles.accordionSection,
+              selectedVariant?.isDark && styles.darkAccordionSection,
             ]}
           >
-            {selectedVariant?.description ||
-              'A versatile accordion component for organizing content.'}
-          </Text>
-        </View>
-
-        <View
-          style={[
-            styles.accordionContainer,
-            selectedVariant?.isDark && styles.darkAccordionContainer,
-          ]}
-        >
-          <Text
-            style={[
-              styles.accordionTitle,
-              selectedVariant?.isDark && styles.darkAccordionTitle,
-            ]}
-          >
-            Standard Accordion
-          </Text>
-          {renderAccordion(
-            (selectedVariant?.variant as string) || 'shadow',
-            (selectedVariant?.theme as string) || 'purple'
-          )}
-        </View>
-
-        <View
-          style={[
-            styles.accordionContainer,
-            selectedVariant?.isDark && styles.darkAccordionContainer,
-          ]}
-        >
-          <Text
-            style={[
-              styles.accordionTitle,
-              selectedVariant?.isDark && styles.darkAccordionTitle,
-            ]}
-          >
-            Compact Accordion
-          </Text>
-          {renderAccordion(
-            (selectedVariant?.variant as string) || 'shadow',
-            (selectedVariant?.theme as string) || 'purple',
-            true
-          )}
-        </View>
-
-        {variant === 'all' ? (
-          Object.entries(variantConfig)
-            .filter(([key]) => key !== 'all')
-            .map(([key, config], index) => (
-              <View
-                key={key}
-                style={[
-                  styles.accordionContainer,
-                  config.isDark && styles.darkAccordionContainer,
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.accordionTitle,
-                    config.isDark && styles.darkAccordionTitle,
-                  ]}
-                >
-                  {config.title}
-                </Text>
-                {renderAccordion(
-                  config.variant as string,
-                  config.theme as string
-                )}
-                {index < Object.keys(variantConfig).length - 2 && (
-                  <View style={styles.divider} />
-                )}
-              </View>
-            ))
-        ) : (
-          <>
-            <View
-              style={[
-                styles.accordionContainer,
-                selectedVariant?.isDark && styles.darkAccordionContainer,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.accordionTitle,
-                  selectedVariant?.isDark && styles.darkAccordionTitle,
-                ]}
-              >
-                Standard Example
-              </Text>
-              {renderAccordion(
-                (selectedVariant?.variant as string) || 'shadow',
-                (selectedVariant?.theme as string) || 'purple'
-              )}
-            </View>
-
-            <View
-              style={[
-                styles.accordionContainer,
-                selectedVariant?.isDark && styles.darkAccordionContainer,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.accordionTitle,
-                  selectedVariant?.isDark && styles.darkAccordionTitle,
-                ]}
-              >
-                Compact Example
-              </Text>
-              {renderAccordion(
-                (selectedVariant?.variant as string) || 'shadow',
-                (selectedVariant?.theme as string) || 'purple',
-                true
-              )}
-            </View>
-          </>
-        )}
-      </ScrollView>
+            {renderVariantAccordions()}
+          </View>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };

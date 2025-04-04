@@ -156,6 +156,12 @@ export const styles = StyleSheet.create({
     zIndex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
+  nestedIndicatorDefault: {
+    left: -12,
+    height: '100%',
+    opacity: 0.7,
+    width: 2,
+  },
   levelIndicator: {
     width: 6,
     height: 6,
@@ -175,6 +181,9 @@ export const styles = StyleSheet.create({
     zIndex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.05)',
   },
+  flatNestedIndicatorDefault: {
+    height: '100%',
+  },
   flatLevelIndicator: {
     width: 4,
     height: 4,
@@ -187,6 +196,20 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+  },
+  titleContentContainer: {
+    flex: 1,
+  },
+  descriptionText: {
+    fontSize: 14,
+    marginTop: 4,
+    letterSpacing: 0.1,
+  },
+  compactDescriptionText: {
+    fontSize: 13,
+  },
+  rightIconContainer: {
+    marginLeft: 8,
   },
   // New styles for modern badges
   modernBadge: {

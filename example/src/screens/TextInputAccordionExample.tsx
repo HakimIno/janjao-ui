@@ -298,7 +298,6 @@ const TextInputAccordionExample = () => {
             animationType="timing"
             animationDuration={300}
             defaultOpenIds={['1']}
-            singleOpen={true}
           />
         </View>
       </ScrollView>

@@ -43,7 +43,6 @@ export type AccordionItemProps = {
   };
   onItemPress?: (item: AccordionItemData) => void;
   isLastInLevel?: boolean;
-  singleOpenMode?: boolean;
 };
 
 const AccordionItem = memo<AccordionItemProps>(
@@ -60,7 +59,6 @@ const AccordionItem = memo<AccordionItemProps>(
     customStyles,
     onItemPress,
     isLastInLevel = false,
-    singleOpenMode = false,
   }) => {
     const { width } = useWindowDimensions();
     const listRef = useAnimatedRef<View>();
@@ -220,10 +218,12 @@ const AccordionItem = memo<AccordionItemProps>(
       listRef,
     ]);
 
-    const heightAnimationStyle = useAnimatedStyle(() => ({
-      height: heightValue.value,
-      overflow: 'hidden' as const,
-    }));
+    const heightAnimationStyle = useAnimatedStyle(() => {
+      return {
+        height: heightValue.value,
+        overflow: 'hidden',
+      };
+    });
 
     const getVariantStyle = useCallback(() => {
       const levelOpacity = 1 - level * 0.05;
@@ -353,15 +353,25 @@ const AccordionItem = memo<AccordionItemProps>(
       }
     }, [variant, theme, level, isLastInLevel]);
 
-    const currentVariantStyle = getVariantStyle();
+    const currentVariantStyle = useMemo(() => {
+      return getVariantStyle();
+    }, [getVariantStyle]);
+
+    const getFlatNestedIndicatorStyle = useMemo(() => {
+      return {
+        backgroundColor: currentVariantStyle.nestedIndicatorColor,
+        left: -16 * level,
+        opacity: variant === 'flat' ? 0.6 - level * 0.05 : 0.4 - level * 0.05,
+        width: variant === 'flat' ? 3 : 2,
+      };
+    }, [currentVariantStyle.nestedIndicatorColor, level, variant]);
+
     const levelIndent = compact ? 10 * level : 18 * level;
 
     const toggleAccordion = useCallback(() => {
       onItemPress?.(item);
 
       if (!item.content && (!item.children || !item.children.length)) return;
-
-      if (singleOpenMode) return;
 
       runOnUI(() => {
         'worklet';
@@ -408,7 +418,6 @@ const AccordionItem = memo<AccordionItemProps>(
       animationDuration,
       onItemPress,
       parentHeightValue,
-      singleOpenMode,
       heightValue,
       listRef,
       open,
@@ -460,7 +469,6 @@ const AccordionItem = memo<AccordionItemProps>(
           customStyles={customStyles}
           onItemPress={onItemPress}
           isLastInLevel={index === (item.children?.length ?? 0) - 1}
-          singleOpenMode={singleOpenMode}
         />
       ));
     }, [
@@ -474,7 +482,6 @@ const AccordionItem = memo<AccordionItemProps>(
       theme,
       customStyles,
       onItemPress,
-      singleOpenMode,
       heightValue,
     ]);
 
@@ -572,20 +579,14 @@ const AccordionItem = memo<AccordionItemProps>(
 
     return (
       <View style={containerStyle}>
-        {/* Nested Indicators */}
         {level > 0 &&
           currentVariantStyle.showNestedIndicator &&
           !currentVariantStyle.flatNested && (
             <View
               style={[
                 styles.nestedIndicator,
-                {
-                  backgroundColor: currentVariantStyle.nestedIndicatorColor,
-                  left: -12,
-                  height: '100%',
-                  opacity: 0.7,
-                  width: 2,
-                },
+                styles.nestedIndicatorDefault,
+                { backgroundColor: currentVariantStyle.nestedIndicatorColor },
               ]}
             />
           )}
@@ -594,14 +595,8 @@ const AccordionItem = memo<AccordionItemProps>(
           <View
             style={[
               styles.flatNestedIndicator,
-              {
-                backgroundColor: currentVariantStyle.nestedIndicatorColor,
-                left: -16 * level,
-                height: '100%',
-                opacity:
-                  variant === 'flat' ? 0.6 - level * 0.05 : 0.4 - level * 0.05,
-                width: variant === 'flat' ? 3 : 2,
-              },
+              styles.flatNestedIndicatorDefault,
+              getFlatNestedIndicatorStyle,
             ]}
           />
         )}
@@ -635,19 +630,16 @@ const AccordionItem = memo<AccordionItemProps>(
           {item.icon && <View style={styles.iconContainer}>{item.icon}</View>}
 
           <View style={styles.titleRow}>
-            <View style={{ flex: 1 }}>
+            <View style={styles.titleContentContainer}>
               <Text style={titleTextStyle} numberOfLines={2}>
                 {item.title}
               </Text>
               {item.description && (
                 <Text
                   style={[
-                    {
-                      fontSize: compact ? 13 : 14,
-                      color: `rgba(${hexToRgb(theme.text)}, 0.7)`,
-                      marginTop: 4,
-                      letterSpacing: 0.1,
-                    },
+                    styles.descriptionText,
+                    compact && styles.compactDescriptionText,
+                    { color: `rgba(${hexToRgb(theme.text)}, 0.7)` },
                     customStyles?.description,
                   ]}
                   numberOfLines={2}
@@ -669,7 +661,7 @@ const AccordionItem = memo<AccordionItemProps>(
           </View>
 
           {item.rightIcon && (
-            <View style={{ marginLeft: 8 }}>{item.rightIcon}</View>
+            <View style={styles.rightIconContainer}>{item.rightIcon}</View>
           )}
 
           {(item.content || (item.children && item.children.length > 0)) && (

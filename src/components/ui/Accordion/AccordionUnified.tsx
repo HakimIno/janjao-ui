@@ -205,7 +205,6 @@ const AccordionUnified: React.FC<AccordionProps> = ({
           customStyles={customStyles}
           onItemPress={handleItemPress}
           isLastInLevel={index === processedData.length - 1}
-          singleOpenMode={singleOpen}
         />
       ))}
     </View>
