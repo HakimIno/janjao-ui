@@ -43,7 +43,9 @@
     "clean": "del-cli lib",
     "prepare": "bob build",
     "release": "release-it",
-    "storybook-generate": "sb-rn-get-stories"
+    "storybook-generate": "sb-rn-get-stories",
+    "start": "expo start",
+    "start-clean": "kill -9 $(lsof -t -i:8081) || true && expo start --reset-cache --clear"
   },
   "keywords": [
     "react-native",
@@ -197,8 +199,8 @@
   "dependencies": {
     "expo": "^51.0.31",
     "expo-linear-gradient": "^13.0.2",
-    "react-native-gesture-handler": "^2.19.0",
-    "react-native-reanimated": "3.10.0",
+    "react-native-gesture-handler": "^2.25.0",
+    "react-native-reanimated": "3.16.1",
     "react-native-svg": "^15.11.2"
   },
   "directories": {

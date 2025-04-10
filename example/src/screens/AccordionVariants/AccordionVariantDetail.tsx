@@ -121,7 +121,8 @@ const AccordionVariantDetail = () => {
 
   const selectedVariant = useMemo((): VariantConfigType => {
     // If variant exists in config, use it; otherwise fall back to shadow variant
-    const configVariant = variant in variantConfig ? variantConfig[variant] : variantConfig.shadow;
+    const configVariant =
+      variant in variantConfig ? variantConfig[variant] : variantConfig.shadow;
     // Add type assertion to satisfy TypeScript
     return configVariant as VariantConfigType;
   }, [variant, variantConfig]);

@@ -2,11 +2,11 @@
 const path = require('path');
 const { getDefaultConfig } = require('expo/metro-config');
 
-const { generate } = require('@storybook/react-native/scripts/generate');
-
-generate({
-  configPath: path.resolve(__dirname, './.storybook'),
-});
+// ปิดการใช้งาน Storybook ชั่วคราวเพื่อแก้ปัญหา
+// const { generate } = require('@storybook/react-native/scripts/generate');
+// generate({
+//   configPath: path.resolve(__dirname, './.storybook'),
+// });
 
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
@@ -33,12 +33,22 @@ config.resolver.sourceExts = [
   'web.tsx',
 ];
 
+// เพิ่มการตั้งค่าเพื่อเพิ่มประสิทธิภาพ
 config.transformer.unstable_allowRequireContext = true;
+config.resolver.resolverMainFields = ['react-native', 'browser', 'main'];
+config.resolver.extraNodeModules = {
+  'react': path.resolve(__dirname, 'node_modules/react'),
+  'react-native': path.resolve(__dirname, 'node_modules/react-native'),
+};
 
-// Add watchFolders to include the parent directory
+// Add watchFolders to include the parent directory and example
 config.watchFolders = [
   path.resolve(__dirname, './node_modules'),
   path.resolve(__dirname, './src'),
+  path.resolve(__dirname, './example'),
 ];
+
+// เพิ่มการกำหนดค่า maxWorkers เพื่อป้องกัน memory leak
+config.maxWorkers = 2;
 
 module.exports = config;

@@ -1,11 +1,10 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Dimensions,
   ScrollView,
-  Animated,
 } from 'react-native';
 import { Checkbox, TodoCheckbox } from '../../../../src/components/ui';
 
@@ -170,7 +169,7 @@ const CheckBoxScreen = () => {
               withShadow={item.withShadow}
               onToggle={() => toggleTodo(item.id)}
               size={getResponsiveSize(24)}
-              textStyle={{ fontSize: getResponsiveSize(14) , color: "#fff" }}
+              textStyle={{ fontSize: getResponsiveSize(14), color: '#fff' }}
             />
           ))}
         </View>
@@ -309,7 +308,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: "#fff"
+    color: '#fff',
   },
   shapesContainer: {
     flexDirection: 'row',
@@ -322,7 +321,7 @@ const styles = StyleSheet.create({
   shapeLabel: {
     marginTop: 5,
     fontSize: 14,
-    color: "#fff"
+    color: '#fff',
   },
   stylesContainer: {
     marginVertical: 10,

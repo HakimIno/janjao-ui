@@ -121,13 +121,7 @@ const TodoCheckbox = ({
       />
 
       <View style={styles.textContainer}>
-        <Animated.Text
-          style={[
-            styles.text,
-            animatedTextStyle,
-            textStyle,
-          ]}
-        >
+        <Animated.Text style={[styles.text, animatedTextStyle, textStyle]}>
           {text}
         </Animated.Text>
 

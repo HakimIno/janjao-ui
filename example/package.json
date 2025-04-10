@@ -19,26 +19,33 @@
     "expo": "~52.0.0",
     "expo-status-bar": "~2.0.1",
     "expo-system-ui": "~4.0.9",
+    "lefthook": "^1.11.8",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-native": "0.76.8",
+    "react-native": "0.76.9",
     "react-native-gesture-handler": "~2.20.2",
-    "react-native-reanimated": "~3.16.7",
+    "react-native-reanimated": "3.16.1",
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",
-    "react-native-web": "~0.19.6"
+    "react-native-svg": "15.8.0",
+    "react-native-web": "~0.19.6",
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@eslint/js": "^9.24.0",
     "@types/react-native": "^0.73.0",
     "@types/react-native-navigation": "^2.0.0",
+    "eslint": "^9.24.0",
+    "globals": "^16.0.0",
     "metro": "0.81.0",
     "metro-config": "0.81.0",
     "metro-resolver": "0.81.0",
-    "react-native-builder-bob": "^0.30.0"
+    "react-native-builder-bob": "^0.30.0",
+    "typescript-eslint": "^8.29.1"
   },
   "private": true,
   "resolutions": {
-    "react-native-reanimated": "3.16.7"
+    "yargs": "^17"
   }
 }

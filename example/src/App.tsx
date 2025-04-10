@@ -12,6 +12,7 @@ import AccordionMenu from './screens/AccordionVariants/AccordionMenu';
 import AccordionVariantDetail from './screens/AccordionVariants/AccordionVariantDetail';
 import TextInputAccordionExample from './screens/TextInputAccordionExample';
 import CheckBoxScreen from './screens/CheckBox';
+import DatePickerScreen from './screens/DatePicker';
 
 const Stack = createStackNavigator();
 
@@ -44,6 +45,12 @@ export default function App() {
             CheckBoxScreen: 'checkbox',
           },
         },
+        DatePicker: {
+          path: 'datepicker',
+          screens: {
+            DatePickerScreen: 'datepicker',
+          },
+        },
       },
     },
   };
@@ -54,6 +61,7 @@ export default function App() {
         <Stack.Screen name="Button" component={ButtonNavigator} />
         <Stack.Screen name="Accordion" component={AccordionNavigator} />
         <Stack.Screen name="CheckBox" component={CheckBoxNavigator} />
+        <Stack.Screen name="DatePicker" component={DatePickerNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -92,6 +100,14 @@ function CheckBoxNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="CheckBoxScreen" component={CheckBoxScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function DatePickerNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="DatePickerScreen" component={DatePickerScreen} />
     </Stack.Navigator>
   );
 }
